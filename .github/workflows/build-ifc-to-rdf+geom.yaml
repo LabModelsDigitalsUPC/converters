@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - 'IFC-converters/IFC-to-RDF+Geom/**'
-      - '.github/workflows/build-ifc-to-rdf+geom.yml'
+      - '.github/workflows/build-ifc-to-rdf+geom.yaml'
   pull_request:
     paths:
       - 'IFC-converters/IFC-to-RDF+Geom/**'
-      - '.github/workflows/build-ifc-to-rdf+geom.yml'
+      - '.github/workflows/build-ifc-to-rdf+geom.yaml'
   workflow_dispatch:
 
 jobs:
@@ -24,6 +24,8 @@ jobs:
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
         run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json;IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: List dist contents
+        run: dir dist
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -42,6 +44,8 @@ jobs:
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
         run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: List dist contents
+        run: ls -la dist/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -60,6 +64,8 @@ jobs:
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
         run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: List dist contents
+        run: ls -la dist/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
