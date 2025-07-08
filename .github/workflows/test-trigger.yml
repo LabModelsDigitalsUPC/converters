@@ -1,0 +1,15 @@
+name: Test Trigger
+
+on:
+  push:
+    paths:
+      - 'IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py'
+      - 'IFC-converters/IFC-to-RDF+Geom/conversion-map.json'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test step
+        run: echo "Workflow triggered successfully!" 
