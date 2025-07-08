@@ -115,7 +115,7 @@ class CompactIFCConverter:
             script_dir = pathlib.Path(__file__).parent
             map_path = script_dir / 'conversion-map.json'
 
-        # Use resource_path to support PyInstaller bundles
+        # Use resource_path to support PyInstaller bundles. (for github actions)
         map_path_str = str(map_path)
         if getattr(sys, 'frozen', False):
             # If running in a bundle
