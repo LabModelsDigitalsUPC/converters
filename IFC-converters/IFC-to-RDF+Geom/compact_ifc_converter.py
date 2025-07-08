@@ -3,7 +3,7 @@ Compact IFC Converter - Complete IFC to RDF + GLB conversion
 Author: Assistant
 Description: Self-contained converter for IFC files to RDF metadata and GLB geometry
 """
-#workflow test comment 
+#workflow test comment 1
 
 import ifcopenshell
 import ifcopenshell.geom
