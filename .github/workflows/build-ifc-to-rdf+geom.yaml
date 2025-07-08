@@ -30,13 +30,6 @@ jobs:
           move dist\compact_ifc_converter.exe dist\windows\ifc-to-rdf+geom.exe
       - name: List dist contents
         run: dir dist\windows
-      - name: Commit built files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add dist/windows/
-          git commit -m "Add Windows executable" || exit 0
-          git push
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -61,13 +54,6 @@ jobs:
           mv dist/compact_ifc_converter dist/linux/ifc-to-rdf+geom
       - name: List dist contents
         run: ls -la dist/linux/
-      - name: Commit built files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add dist/linux/
-          git commit -m "Add Linux executable" || exit 0
-          git push
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -92,13 +78,6 @@ jobs:
           mv dist/compact_ifc_converter dist/macos/ifc-to-rdf+geom
       - name: List dist contents
         run: ls -la dist/macos/
-      - name: Commit built files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add dist/macos/
-          git commit -m "Add macOS executable" || exit 0
-          git push
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
