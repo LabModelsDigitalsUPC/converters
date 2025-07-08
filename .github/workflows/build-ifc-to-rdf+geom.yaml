@@ -24,13 +24,24 @@ jobs:
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
         run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json;IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: Create platform folder and move executable
+        run: |
+          mkdir -p dist\windows
+          move dist\compact_ifc_converter.exe dist\windows\ifc-to-rdf+geom.exe
       - name: List dist contents
-        run: dir dist
+        run: dir dist\windows
+      - name: Commit built files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dist/windows/
+          git commit -m "Add Windows executable" || exit 0
+          git push
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ifc-to-rdf+geom-windows
-          path: dist/*
+          path: dist/windows/*
 
   build-linux:
     runs-on: ubuntu-latest
@@ -44,13 +55,24 @@ jobs:
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
         run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: Create platform folder and move executable
+        run: |
+          mkdir -p dist/linux
+          mv dist/compact_ifc_converter dist/linux/ifc-to-rdf+geom
       - name: List dist contents
-        run: ls -la dist/
+        run: ls -la dist/linux/
+      - name: Commit built files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dist/linux/
+          git commit -m "Add Linux executable" || exit 0
+          git push
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ifc-to-rdf+geom-linux
-          path: dist/*
+          path: dist/linux/*
 
   build-macos:
     runs-on: macos-latest
@@ -64,10 +86,21 @@ jobs:
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
         run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: Create platform folder and move executable
+        run: |
+          mkdir -p dist/macos
+          mv dist/compact_ifc_converter dist/macos/ifc-to-rdf+geom
       - name: List dist contents
-        run: ls -la dist/
+        run: ls -la dist/macos/
+      - name: Commit built files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dist/macos/
+          git commit -m "Add macOS executable" || exit 0
+          git push
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ifc-to-rdf+geom-macos
-          path: dist/*
+          path: dist/macos/*
