@@ -3,11 +3,13 @@ name: Build ifc-to-rdf+geom executables
 on:
   push:
     paths:
-      - 'IFC-converters/IFC-to-RDF+Geom/**'
+      - 'IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py'
+      - 'IFC-converters/IFC-to-RDF+Geom/conversion-map.json'
       - '.github/workflows/build-ifc-to-rdf+geom.yaml'
   pull_request:
     paths:
-      - 'IFC-converters/IFC-to-RDF+Geom/**'
+      - 'IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py'
+      - 'IFC-converters/IFC-to-RDF+Geom/conversion-map.json'
       - '.github/workflows/build-ifc-to-rdf+geom.yaml'
   workflow_dispatch:
 
@@ -15,9 +17,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install dependencies
@@ -31,7 +33,7 @@ jobs:
       - name: List dist contents
         run: dir dist\windows
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ifc-to-rdf+geom-windows
           path: dist/windows/*
@@ -39,9 +41,9 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install dependencies
@@ -55,7 +57,7 @@ jobs:
       - name: List dist contents
         run: ls -la dist/linux/
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ifc-to-rdf+geom-linux
           path: dist/linux/*
@@ -63,9 +65,9 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install dependencies
@@ -79,7 +81,7 @@ jobs:
       - name: List dist contents
         run: ls -la dist/macos/
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ifc-to-rdf+geom-macos
           path: dist/macos/*

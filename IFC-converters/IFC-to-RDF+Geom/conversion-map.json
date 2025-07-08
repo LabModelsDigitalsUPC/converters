@@ -5365,7 +5365,7 @@
 "classifications":{
     "classification_example": {
         "ifc_classification_name": "https://example.org/classification_ontology#OntologyClassForName",
-        "ifc_classification_value": "https://example.org/#OntologyClassForValue"
+        "ifc_classification_value": "https://example.org/#3"
     }
 }
 }
