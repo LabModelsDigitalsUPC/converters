@@ -86,27 +86,27 @@ python IFC-to-RDF-Geom/compact_ifc_converter.py <path_to_ifc_file> [options]
 
 Convert an IFC file and output RDF and GLB:
 ```sh
-./compact_ifc_converter my_model.ifc
+./ifc-to-rdf-geom my_model.ifc
 ```
 
 Specify a custom asset name and output directories:
 ```sh
-./compact_ifc_converter my_model.ifc -n MyAsset -r ./rdf_out -g ./glb_out
+./ifc-to-rdf-geom my_model.ifc -n MyAsset -r ./rdf_out -g ./glb_out
 ```
 
 Convert only to RDF (skip geometry):
 ```sh
-./compact_ifc_converter my_model.ifc --no-geometry
+./ifc-to-rdf-geom my_model.ifc --no-geometry
 ```
 
 Use a custom conversion map:
 ```sh
-./compact_ifc_converter my_model.ifc -m ./my_conversion_map.json
+./ifc-to-rdf-geom my_model.ifc -m ./my_conversion_map.json
 ```
 
 Enable verbose logging for debugging:
 ```sh
-./compact_ifc_converter my_model.ifc --verbose
+./ifc-to-rdf-geom my_model.ifc --verbose
 ```
 
 ### Output
