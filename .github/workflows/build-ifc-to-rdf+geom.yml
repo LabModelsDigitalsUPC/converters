@@ -1,0 +1,67 @@
+name: Build Executable
+
+on:
+  push:
+    paths:
+      - 'IFC-converters/IFC-to-RDF+Geom/**'
+      - '.github/workflows/build-ifc-to-rdf+geom.yml'
+  pull_request:
+    paths:
+      - 'IFC-converters/IFC-to-RDF+Geom/**'
+      - '.github/workflows/build-ifc-to-rdf+geom.yml'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
+      - name: Build executable
+        run: pyinstaller --onefile --add-data "IFC-to-RDF+Geom/conversion-map.json;IFC-to-RDF+Geom" IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ifc-to-rdf+geom-windows
+          path: dist/*
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
+      - name: Build executable
+        run: pyinstaller --onefile --add-data "IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ifc-to-rdf+geom-linux
+          path: dist/*
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
+      - name: Build executable
+        run: pyinstaller --onefile --add-data "IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-to-RDF+Geom/compact_ifc_converter.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ifc-to-rdf+geom-macos
+          path: dist/* 
