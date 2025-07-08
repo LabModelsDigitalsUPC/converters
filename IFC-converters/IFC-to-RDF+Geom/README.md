@@ -21,7 +21,7 @@
 
 ## 🏗️ Overview
 
-**Compact IFC Converter** is a tool to convert IFC files to RDF metadata and GLB geometry. It is self-contained, configurable, and can be used as a command-line tool or as a standalone executable (no Python required for users of the executable).
+**IFC to RDF+Geometry Converter** is a tool to convert IFC files to RDF metadata and GLB geometry. It is self-contained, configurable, and can be used as a command-line tool or as a standalone executable (no Python required for users of the executable).
 
 ---
 

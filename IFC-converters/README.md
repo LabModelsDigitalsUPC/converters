@@ -43,7 +43,7 @@ IFC-converters/
 To ensure consistency and maintainability, **follow these steps when adding a new converter:**
 
 ### 1. Create a New Folder
-- Place all code, configuration, and documentation for your converter in a dedicated subfolder (e.g., `IFC-to-XYZ/`).
+- Place all code, configuration, and documentation for your converter in a dedicated subfolder (e.g., `IFC-to-XY+Z/`). Add '+' when more than one ouput is obtained.
 
 ### 2. Write a Well-Structured README
 - Include an index/table of contents.
