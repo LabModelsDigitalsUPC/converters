@@ -22,7 +22,7 @@ The goal is to provide a **homogeneous, well-documented, and easy-to-extend** se
 **Example structure:**
 ```
 IFC-converters/
-  ├─ IFC-to-RDF+Geom/
+  ├─ IFC-to-RDF-Geom/
   │    ├─ compact_ifc_converter.py
   │    ├─ conversion-map.json
   │    └─ README.md
@@ -32,8 +32,8 @@ IFC-converters/
   └─ README.md  # (this file)
 .github/
   └─ workflows/
-      ├─ build-IFC-to-RDF+Geom.yml
-      └─ build-Another-Converter.yml
+      ├─ build-ifc-to-rdf-geom.yaml
+      └─ build-Another-Converter.yaml
 ```
 
 ---
@@ -43,14 +43,14 @@ IFC-converters/
 To ensure consistency and maintainability, **follow these steps when adding a new converter:**
 
 ### 1. Create a New Folder
-- Place all code, configuration, and documentation for your converter in a dedicated subfolder (e.g., `IFC-to-XY+Z/`). Add '+' when more than one ouput is obtained.
+- Place all code, configuration, and documentation for your converter in a dedicated subfolder (e.g., `IFC-to-X-Y-Z/`). Add - at the end to indicate all the outputs expected
 
 ### 2. Write a Well-Structured README
 - Include an index/table of contents.
 - Provide a clear user guide (requirements, usage, examples, output).
 - Provide a developer guide (project structure, code overview, contribution guidelines, build pipeline).
 - Use section headers, tables, and examples for clarity.
-- See the `IFC-to-RDF+Geom/README.md` for a template.
+- See the `IFC-to-RDF-Geom/README.md` for a template.
 
 ### 3. Annotate and Document Your Code
 - Use docstrings for all classes and functions.
@@ -65,7 +65,7 @@ To ensure consistency and maintainability, **follow these steps when adding a ne
   - Bundle any required data/config files.
   - Upload the resulting executables as artifacts.
   - Trigger only on changes to the converter's folder or its workflow file (use the `paths` filter).
-- See `build-IFC-to-RDF+Geom.yml` for an example.
+- See `build-ifc-to-rdf-geom.yaml` for an example.
 
 ### 5. Test Everything
 - Ensure the converter works as expected locally and as a built executable.

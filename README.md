@@ -22,13 +22,13 @@ This repository is dedicated to hosting a collection of **data converters** desi
 ```
 repo-root/
   ├─ IFC-converters/
-  │    ├─ IFC-to-RDF+Geom/
+  │    ├─ IFC-to-RDF-Geom/
   │    │    ├─ compact_ifc_converter.py
   │    │    ├─ conversion-map.json
   │    │    └─ README.md
   │    └─ ...
   ├─ dist/
-  │    ├─ IFC-to-RDF+Geom.exe
+  │    ├─ ifc-to-rdf-geom.exe
   │    └─ ...
   └─ README.md  # (this file)
 ```
@@ -60,9 +60,9 @@ repo-root/
 If you do not see the executables in the `dist/` folder, you can download the latest built versions directly from GitHub Actions as follows:
 
 1. Go to the [Actions](../../actions) tab of this repository on GitHub.
-2. Click on the most recent workflow run for the converter you are interested in (e.g., 'Build ifc-to-rdf+geom executables').
+2. Click on the most recent workflow run for the converter you are interested in (e.g., 'Build ifc-to-rdf-geom executables').
 3. Scroll to the bottom of the workflow run summary page.
-4. Under the 'Artifacts' section, click the name of the artifact (e.g., `ifc-to-rdf+geom-windows`, `ifc-to-rdf+geom-linux`, or `ifc-to-rdf+geom-macos`) to download the executable for your platform.
+4. Under the 'Artifacts' section, click the name of the artifact (e.g., `ifc-to-rdf-geom-windows`, `ifc-to-rdf-geom-linux`, or `ifc-to-rdf-geom-macos`) to download the executable for your platform.
 5. Unzip the downloaded file if necessary and follow the usage instructions in the converter's `README.md`.
 
 If you need a permanent or public download link, please contact the maintainers or check the Releases tab for official releases. 

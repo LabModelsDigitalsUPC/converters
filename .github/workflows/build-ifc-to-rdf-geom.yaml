@@ -1,16 +1,16 @@
-name: Build ifc-to-rdf+geom executables
+name: Build ifc-to-rdf-geom executables
 
 on:
   push:
     paths:
-      - 'IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py'
-      - 'IFC-converters/IFC-to-RDF+Geom/conversion-map.json'
-      - '.github/workflows/build-ifc-to-rdf+geom.yaml'
+      - 'IFC-converters/IFC-to-RDF-Geom/compact_ifc_converter.py'
+      - 'IFC-converters/IFC-to-RDF-Geom/conversion-map.json'
+      - '.github/workflows/build-ifc-to-rdf-geom.yaml'
   pull_request:
     paths:
-      - 'IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py'
-      - 'IFC-converters/IFC-to-RDF+Geom/conversion-map.json'
-      - '.github/workflows/build-ifc-to-rdf+geom.yaml'
+      - 'IFC-converters/IFC-to-RDF-Geom/compact_ifc_converter.py'
+      - 'IFC-converters/IFC-to-RDF-Geom/conversion-map.json'
+      - '.github/workflows/build-ifc-to-rdf-geom.yaml'
   workflow_dispatch:
 
 jobs:
@@ -25,15 +25,15 @@ jobs:
       - name: Install dependencies
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
-        run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json;IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+        run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF-Geom/conversion-map.json;IFC-to-RDF-Geom" IFC-converters/IFC-to-RDF-Geom/compact_ifc_converter.py
       - name: Create platform folder and move executable
         run: |
           mkdir -p dist\windows
-          move dist\compact_ifc_converter.exe dist\windows\ifc-to-rdf+geom.exe
+          move dist\compact_ifc_converter.exe dist\windows\ifc-to-rdf-geom.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ifc-to-rdf+geom-windows
+          name: ifc-to-rdf-geom-windows
           path: dist/windows/*
 
   build-linux:
@@ -47,15 +47,15 @@ jobs:
       - name: Install dependencies
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
-        run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+        run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF-Geom/conversion-map.json:IFC-to-RDF-Geom" IFC-converters/IFC-to-RDF-Geom/compact_ifc_converter.py
       - name: Create platform folder and move executable
         run: |
           mkdir -p dist/linux
-          mv dist/compact_ifc_converter dist/linux/ifc-to-rdf+geom
+          mv dist/compact_ifc_converter dist/linux/ifc-to-rdf-geom
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ifc-to-rdf+geom-linux
+          name: ifc-to-rdf-geom-linux
           path: dist/linux/*
 
   build-macos:
@@ -69,13 +69,13 @@ jobs:
       - name: Install dependencies
         run: pip install pyinstaller ifcopenshell rdflib numpy pygltflib
       - name: Build executable
-        run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF+Geom/conversion-map.json:IFC-to-RDF+Geom" IFC-converters/IFC-to-RDF+Geom/compact_ifc_converter.py
+        run: pyinstaller --onefile --add-data "IFC-converters/IFC-to-RDF-Geom/conversion-map.json:IFC-to-RDF-Geom" IFC-converters/IFC-to-RDF-Geom/compact_ifc_converter.py
       - name: Create platform folder and move executable
         run: |
           mkdir -p dist/macos
-          mv dist/compact_ifc_converter dist/macos/ifc-to-rdf+geom
+          mv dist/compact_ifc_converter dist/macos/ifc-to-rdf-geom
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ifc-to-rdf+geom-macos
+          name: ifc-to-rdf-geom-macos
           path: dist/macos/*

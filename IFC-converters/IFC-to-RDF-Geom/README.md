@@ -21,7 +21,7 @@
 
 ## 🏗️ Overview
 
-**IFC to RDF+Geometry Converter** is a tool to convert IFC files to RDF metadata and GLB geometry. It is self-contained, configurable, and can be used as a command-line tool or as a standalone executable (no Python required for users of the executable).
+**IFC to RDF + Geometry Converter** is a tool to convert IFC files to RDF metadata and GLB geometry. It is self-contained, configurable, and can be used as a command-line tool or as a standalone executable (no Python required for users of the executable).
 
 ---
 
@@ -64,7 +64,7 @@
 ### Command Line Usage
 
 ```sh
-python IFC-to-RDF+Geom/compact_ifc_converter.py <path_to_ifc_file> [options]
+python IFC-to-RDF-Geom/compact_ifc_converter.py <path_to_ifc_file> [options]
 # OR (if using the executable)
 ./compact_ifc_converter <path_to_ifc_file> [options]
 ```
@@ -120,7 +120,7 @@ Enable verbose logging for debugging:
 ### Project Structure
 ```
 IFC-converters/
-  └─ IFC-to-RDF+Geom/
+  └─ IFC-to-RDF-Geom/
       ├─ compact_ifc_converter.py   # Main converter script
       ├─ conversion-map.json       # Mapping configuration for RDF conversion
       └─ README.md                 # This documentation
