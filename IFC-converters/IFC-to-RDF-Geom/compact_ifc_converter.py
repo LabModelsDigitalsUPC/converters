@@ -157,7 +157,7 @@ class CompactIFCConverter:
         self.graph.add((asset_ref, self.namespaces['RDF'].type, self.namespaces['OWL'].Ontology))
     
     def _generate_global_id(self) -> str:
-        """Generate IFC-style GlobalId"""
+        """Generate GlobalId"""
         return str(uuid.uuid4())
     
     def _get_instance_uri(self, entity) -> Tuple[URIRef, str]:
@@ -166,7 +166,7 @@ class CompactIFCConverter:
         if not global_id or not global_id.strip():
             global_id = self._generate_global_id()
         else:
-            global_id = ifcopenshell.guid.split(ifcopenshell.guid.expand(global_id))
+            global_id = ifcopenshell.guid.split(ifcopenshell.guid.expand(global_id)).strip("{}")
         return self.namespaces['INST'][global_id], global_id
     
     def load_ifc(self) -> bool:
@@ -259,22 +259,41 @@ class CompactIFCConverter:
         
         try:
             elements = self.ifc_file.by_type('IfcProduct')
+            total_elements = len(elements)
             processed_count = 0
+            skipped_count = 0
             
-            for element in elements:
+            logger.debug(f"Found {total_elements} IfcProduct elements to process")
+            
+            for element_idx, element in enumerate(elements):
                 try:
+                    element_type = element.is_a()
+                    element_name = getattr(element, 'Name', 'Unnamed')
+                    
+                    logger.debug(f"[{element_idx+1}/{total_elements}] Processing {element_type} '{element_name}' (ID: {element.id()})")
+                    
                     if not hasattr(element, 'Representation') or not element.Representation:
+                        logger.debug(f"  -> Skipped: No representation")
+                        skipped_count += 1
                         continue
                     
                     representations = element.Representation.Representations
+                    logger.debug(f"  -> Found {len(representations)} representations")
                     
                     for rep_index, representation in enumerate(representations):
                         try:
+                            rep_type = representation.RepresentationType if hasattr(representation, 'RepresentationType') else 'Unknown'
+                            logger.debug(f"    -> Processing representation {rep_index} (Type: {rep_type})")
+                            
                             shape = ifcopenshell.geom.create_shape(self.settings, element, representation)
+
+                            logger.debug("shape created")
                             
                             if shape and shape.geometry:
                                 vertices = np.array(shape.geometry.verts).reshape((-1, 3))
                                 faces = np.array(shape.geometry.faces).reshape((-1, 3))
+                                
+                                logger.debug(f"       Original geometry: {len(vertices)} vertices, {len(faces)} faces")
                                 
                                 # Convert coordinates IFC (Z-up) to GLB (Y-up)
                                 vertices_converted = vertices.copy()
@@ -303,16 +322,26 @@ class CompactIFCConverter:
                                     
                                     self.elements_data.append(element_data)
                                     processed_count += 1
+                                    
+                                    logger.debug(f"       Successfully processed: Material={material_index}, Color={color}")
+                                else:
+                                    logger.debug(f"       Skipped: Empty geometry after conversion")
+                            else:
+                                logger.debug(f"       Skipped: No geometry data")
                         
                         except Exception as e:
-                            logger.debug(f"Error processing representation: {e}")
+                            logger.debug(f"       Error processing representation {rep_index}: {e}")
                             continue
                 
                 except Exception as e:
-                    logger.debug(f"Error processing element {element.id()}: {e}")
+                    logger.debug(f"  -> Error processing element: {e}")
                     continue
             
-            logger.info(f"Geometry processed: {processed_count} representations")
+            logger.info(f"Geometry processing complete:")
+            logger.info(f"  - Total elements: {total_elements}")
+            logger.info(f"  - Processed: {processed_count} representations")
+            logger.info(f"  - Skipped: {skipped_count} elements (no representation)")
+            
             return processed_count > 0
             
         except Exception as e:
@@ -325,8 +354,13 @@ class CompactIFCConverter:
         """Get or create material index for color"""
         color_key = tuple(color)
         if color_key not in self.materials_map:
-            self.materials_map[color_key] = len(self.materials_map)
-        return self.materials_map[color_key]
+            material_index = len(self.materials_map)
+            self.materials_map[color_key] = material_index
+            logger.debug(f"Created new material {material_index} for color {color_key}")
+        else:
+            material_index = self.materials_map[color_key]
+            logger.debug(f"Reusing material {material_index} for color {color_key}")
+        return material_index
     
     def _add_binary_data(self, data) -> Tuple[int, int]:
         """Add data to binary buffer with alignment"""
@@ -362,6 +396,7 @@ class CompactIFCConverter:
             gltf.buffers = []
             
             # Create materials
+            logger.debug(f"Creating {len(self.materials_map)} materials")
             for color, material_index in self.materials_map.items():
                 material = Material()
                 material.pbrMetallicRoughness = PbrMetallicRoughness()
@@ -370,11 +405,18 @@ class CompactIFCConverter:
                 material.pbrMetallicRoughness.roughnessFactor = 0.8
                 material.name = f"Material_{material_index}"
                 gltf.materials.append(material)
+                logger.debug(f"  Material {material_index}: Color={color}")
             
             # Process elements
             node_indices = []
+            total_binary_size = 0
             
-            for element_data in self.elements_data:
+            logger.debug("Processing elements for GLB:")
+            for elem_idx, element_data in enumerate(self.elements_data):
+                logger.debug(f"  [{elem_idx+1}/{len(self.elements_data)}] Processing {element_data['name']}:")
+                logger.debug(f"    Type: {element_data['element_type']}")
+                logger.debug(f"    Vertices: {element_data['vertex_count']}, Faces: {element_data['face_count']}")
+                
                 vertices = element_data['vertices']
                 faces = element_data['faces'].flatten().astype(np.uint16)
                 material_index = element_data['material_index']
@@ -382,6 +424,11 @@ class CompactIFCConverter:
                 # Add to binary buffer
                 vertex_offset, vertex_length = self._add_binary_data(vertices)
                 index_offset, index_length = self._add_binary_data(faces)
+                total_binary_size = len(self.binary_data)
+                
+                logger.debug(f"    Binary data: vertex_offset={vertex_offset}, vertex_length={vertex_length}")
+                logger.debug(f"    Binary data: index_offset={index_offset}, index_length={index_length}")
+                logger.debug(f"    Total binary size: {total_binary_size} bytes")
                 
                 # Create buffer views and accessors
                 vertex_buffer_view = BufferView(buffer=0, byteOffset=vertex_offset, byteLength=vertex_length, target=34962)
@@ -414,6 +461,8 @@ class CompactIFCConverter:
                 gltf.meshes.append(mesh)
                 gltf.nodes.append(node)
                 node_indices.append(len(gltf.nodes) - 1)
+                
+                logger.debug(f"    Created: mesh_index={len(gltf.meshes)-1}, node_index={len(gltf.nodes)-1}")
             
             # Create buffer and scene
             buffer = Buffer(byteLength=len(self.binary_data))
@@ -423,14 +472,26 @@ class CompactIFCConverter:
             gltf.scenes.append(scene)
             gltf.scene = 0
             
+            logger.debug(f"Final GLB structure:")
+            logger.debug(f"  Nodes: {len(gltf.nodes)}")
+            logger.debug(f"  Meshes: {len(gltf.meshes)}")
+            logger.debug(f"  Materials: {len(gltf.materials)}")
+            logger.debug(f"  Accessors: {len(gltf.accessors)}")
+            logger.debug(f"  BufferViews: {len(gltf.bufferViews)}")
+            logger.debug(f"  Buffers: {len(gltf.buffers)}")
+            logger.debug(f"  Binary data size: {len(self.binary_data)} bytes")
+            
             # Save GLB
             os.makedirs(self.glb_output_path, exist_ok=True)
             glb_file_path = os.path.join(self.glb_output_path, f"{self.asset_name}.glb")
             
+            logger.debug(f"Saving GLB to: {glb_file_path}")
             gltf.set_binary_blob(bytes(self.binary_data))
             gltf.save(glb_file_path)
             
-            logger.info(f"GLB created: {glb_file_path}")
+            file_size = os.path.getsize(glb_file_path)
+            logger.info(f"GLB created: {glb_file_path} ({file_size:,} bytes)")
+            
             return glb_file_path
             
         except Exception as e:
@@ -788,28 +849,40 @@ class CompactIFCConverter:
         
         try:
             # Load IFC
+            logger.debug("Step 1: Loading IFC file")
             if not self.load_ifc():
                 self.conversion_results['success'] = False
                 return self.conversion_results
             
             # Cache properties
+            logger.debug("Step 2: Caching properties and quantity sets")
             self._cache_properties()
             
             # Process geometry
+            logger.debug("Step 3: Processing geometry")
             geometry_success = self.process_geometry()
             
             # Create GLB
             glb_file_path = None
             if geometry_success:
+                logger.debug("Step 4: Creating GLB file")
                 glb_file_path = self.create_glb()
+            else:
+                logger.debug("Step 4: Skipping GLB creation (no geometry processed)")
             
             # Create RDF entities
+            logger.debug("Step 5: Creating RDF entities")
             self.create_rdf_entities()
             
             # Link geometry in RDF
-            self.create_geometry_links(glb_file_path)
+            if glb_file_path:
+                logger.debug("Step 6: Linking geometry in RDF")
+                self.create_geometry_links(glb_file_path)
+            else:
+                logger.debug("Step 6: Skipping geometry links (no GLB file)")
             
             # Save RDF
+            logger.debug("Step 7: Saving RDF graph")
             rdf_file_path = self.save_rdf()
             
             # Prepare results
