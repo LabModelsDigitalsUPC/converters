@@ -108,19 +108,21 @@ class CompactIFCConverter:
     
     def _load_conversion_map(self, conversion_map_path: Optional[str] = None) -> Dict:
         """Load conversion map from external JSON file"""
-        # Determine conversion map path
+        
         if conversion_map_path:
-            map_path = pathlib.Path(conversion_map_path)
+            # Use provided path directly
+            map_path_str = conversion_map_path
         else:
-            # Look for conversion-map.json in the same directory as this script
-            script_dir = pathlib.Path(__file__).parent
-            map_path = script_dir / 'conversion-map.json'
-
-        # Use resource_path to support PyInstaller bundles. (for github actions)
-        map_path_str = str(map_path)
-        if getattr(sys, 'frozen', False):
-            # If running in a bundle
-            map_path_str = resource_path(str(map_path.relative_to(pathlib.Path(__file__).parent.parent)))
+            # Handle bundled vs development execution
+            if getattr(sys, 'frozen', False):
+                # Running in PyInstaller bundle - use the embedded file
+                # The file is embedded as "IFC-to-RDF-Geom/conversion-map.json"
+                map_path_str = resource_path(os.path.join('IFC-to-RDF-Geom', 'conversion-map.json'))
+            else:
+                # Running in development - look for file relative to script
+                script_dir = pathlib.Path(__file__).parent
+                map_path_str = str(script_dir / 'conversion-map.json')
+        
         try:
             logger.info(f"Loading conversion map from: {map_path_str}")
             with open(map_path_str, 'r', encoding='utf-8') as f:
@@ -130,7 +132,7 @@ class CompactIFCConverter:
 
         except Exception as e:
             logger.error(f"Error loading conversion map from {map_path_str}: {e}")
-            logger.warning("Using minimal default mapping")
+            raise FileNotFoundError(f"Failed to load conversion map from {map_path_str}: {e}") from e
     
     def _setup_namespaces(self):
         """Setup RDF namespaces"""
